@@ -499,7 +499,7 @@
         <h2 id="contact-heading">Mulai Transaksi Aman</h2>
       </div>
       <div class="form-card">
-        <form action="https://formsubmit.co/xminetrader@gmail.com" method="POST" itemscope itemtype="https://schema.org/ContactPoint">
+        <form id="waForm">
           <div class="input-row">
             <label for="nama" class="visually-hidden">Nama lengkap</label>
             <input type="text" id="nama" name="Nama" placeholder="Nama lengkap" required autocomplete="name" itemprop="name">
@@ -618,5 +618,37 @@
   });
 </script>
 
+<script>
+document.getElementById('waForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const nama = document.getElementById('nama').value;
+  const email = document.getElementById('email').value;
+  const nomor = document.getElementById('nomor').value;
+  const pesan = document.getElementById('pesan').value;
+
+  const waNumber = "32460221981";
+
+  const message =
+`Halo XMINE CLOUD,
+
+Nama: ${nama}
+Email: ${email}
+Nomor: ${nomor}
+
+Pesan:
+${pesan}`;
+
+  const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
+  // buka WhatsApp
+  window.open(waUrl, '_blank');
+
+  // redirect ke halaman thanks setelah 1 detik
+  setTimeout(() => {
+    window.location.href = "https://xmine.cloud/thanks.html";
+  }, 300);
+});
+</script>
 </body>
 </html>
