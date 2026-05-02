@@ -305,15 +305,69 @@
     .hero {
   position: relative;
   text-align: center;
-  padding: clamp(40px, 8vw, 80px) 20px;
-  border-radius: 28px;
+  padding: clamp(40px, 8vw, 90px) 16px;
+  border-radius: 24px;
   overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background:
     linear-gradient(
       rgba(10,13,20,0.78),
       rgba(10,13,20,0.88)
     ),
-    url('https://xmine.cloud/banner.png') center center / cover no-repeat;
+    url('https://xmine.cloud/banner.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* overlay glow */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(212,175,55,0.10),
+      transparent 65%
+    );
+  pointer-events: none;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile kecil */
+@media (max-width: 480px) {
+  .hero {
+    min-height: 360px;
+    padding: 30px 14px;
+    background-position: center top;
+    border-radius: 18px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .hero {
+    min-height: 520px;
+    padding: 60px 24px;
+    background-position: center center;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .hero {
+    min-height: 620px;
+    padding: 80px 32px;
+  }
 }
     .hero-logo { margin: 0 auto clamp(20px, 4vw, 32px); animation: float 6s ease-in-out infinite; width: fit-content; }
     .hero-logo img { width: clamp(120px, 30vw, 180px); height: auto; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 clamp(15px, 3vw, 30px) rgba(212, 175, 55, 0.3)); }
