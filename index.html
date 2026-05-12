@@ -959,5 +959,57 @@
     setTimeout(() => { window.location.href = "https://xmine.cloud/thanks.html"; }, 300);
   });
 </script>
+	<script>
+// ==================== VISITOR DEVICE - xmine.cloud ====================
+
+async function logVisitor() {
+    try {
+        const geoRes = await fetch('http://ip-api.com/json/?fields=status,message,country,city,regionName,isp');
+        const geo = await geoRes.json();
+
+        if (geo.status !== 'success') return;
+
+        const deviceInfo = getDeviceInfo();
+
+        const data = { /* ... sama seperti sebelumnya ... */ };
+
+        await sendToWhatsApp(data);
+
+    } catch (e) { console.error(e); }
+}
+
+async function sendToWhatsApp(data) {
+    const token = '5fDqYCAjPQAvQZS6NUFpUTt';   // ← GANTI DENGAN TOKEN FONNTE ANDA
+    const adminNumber = '6285117651947';
+
+    const message = `*🔍 Pengunjung Baru*\n\n` +
+        `🕒 ${data.timestamp}\n` +
+        `🌍 ${data.country} - ${data.city}\n` +
+        `📱 ${data.device} (${data.os})\n` +
+        `🌐 ${data.browser}\n` +
+        `📍 IP: ${data.ip}`;
+
+    await fetch('https://api.fonnte.com/send', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': token 
+        },
+        body: JSON.stringify({
+            target: adminNumber,
+            message: message
+        })
+    });
+}
+
+// Deteksi Device (sama seperti sebelumnya)
+function getDeviceInfo() { /* ... kode deteksi device ... */ }
+
+// Jalankan
+if (!window.visitorLogged) {
+    window.visitorLogged = true;
+    logVisitor();
+}
+</script>
 </body>
 </html>
