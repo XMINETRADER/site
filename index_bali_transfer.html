@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bali Transfer Fare</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f5f5fb}
+.header{padding:30px;text-align:center;background:linear-gradient(135deg,#ff008c,#7b2cff);color:#fff}
+.wrap{max-width:1400px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:20px}
+.card{background:#fff;border-radius:22px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+label{display:block;margin:10px 0 5px;font-weight:700}
+select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #ddd}
+button{background:linear-gradient(135deg,#ff008c,#7b2cff);color:#fff;border:none;font-weight:700;cursor:pointer}
+#map{height:650px;border-radius:20px}
+.price{font-size:42px;font-weight:700}
+.small{color:#666;margin-top:5px}
+.wa{display:block;text-align:center;text-decoration:none;background:#25D366;color:#fff;padding:15px;border-radius:12px;margin-top:15px}
+@media(max-width:768px){
+.grid{grid-template-columns:1fr}
+#map{height:400px}
+}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>CALCULATE YOUR TRANSFER FARE</h1>
+<p>Bali Airport Transfer</p>
+</div>
+
+<div class="wrap">
+<div class="grid">
+
+<div class="card">
+<label>Pickup</label>
+<select id="pickup">
+<option value="-8.74817,115.16722">Ngurah Rai Airport</option>
+</select>
+
+<label>Destination</label>
+<select id="dest">
+<option value="-8.718,115.168">Kuta</option>
+<option value="-8.690,115.168">Seminyak</option>
+<option value="-8.647,115.138">Canggu</option>
+<option value="-8.506,115.262">Ubud</option>
+<option value="-8.811,115.231">Nusa Dua</option>
+<option value="-8.790,115.160">Jimbaran</option>
+<option value="-8.829,115.084">Uluwatu</option>
+<option value="-8.670,115.260">Sanur</option>
+</select>
+
+<label>Vehicle</label>
+<select id="vehicle">
+<option value="1">Premium MPV</option>
+<option value="1.25">Premium SUV</option>
+<option value="1.5">Premium Van</option>
+</select>
+
+<button onclick="calc()">CALCULATE FARE</button>
+
+<div style="margin-top:20px">
+<div class="price" id="idr">Rp 200.000</div>
+<div class="small" id="usd">$11.11</div>
+<div class="small" id="distance">Distance: -</div>
+<div class="small" id="duration">ETA: -</div>
+</div>
+
+<a class="wa" id="wa" href="#" target="_blank">BOOK VIA WHATSAPP</a>
+</div>
+
+<div class="card">
+<div id="map"></div>
+</div>
+
+</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map('map').setView([-8.74817,115.16722],11);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+let line,marker1,marker2;
+
+function hav(lat1,lon1,lat2,lon2){
+const R=6371;
+const dLat=(lat2-lat1)*Math.PI/180;
+const dLon=(lon2-lon1)*Math.PI/180;
+const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function calc(){
+const p=document.getElementById('pickup').value.split(',');
+const d=document.getElementById('dest').value.split(',');
+
+const lat1=parseFloat(p[0]),lon1=parseFloat(p[1]);
+const lat2=parseFloat(d[0]),lon2=parseFloat(d[1]);
+
+const km=hav(lat1,lon1,lat2,lon2);
+
+let fare=200000;
+if(km>5) fare=250000;
+if(km>10) fare=350000;
+if(km>20) fare=450000;
+if(km>30) fare=650000;
+if(km>50) fare=850000;
+
+fare=Math.round(fare*parseFloat(document.getElementById('vehicle').value));
+
+document.getElementById('idr').innerHTML='Rp '+fare.toLocaleString('id-ID');
+document.getElementById('usd').innerHTML='$'+(fare/16500).toFixed(2);
+document.getElementById('distance').innerHTML='Distance: '+km.toFixed(1)+' km';
+document.getElementById('duration').innerHTML='ETA: '+Math.round(km*2)+' mins';
+
+document.getElementById('wa').href='https://wa.me/6285117651947?text='+encodeURIComponent('Halo, saya ingin booking transfer. Harga: Rp '+fare.toLocaleString('id-ID'));
+
+if(line) map.removeLayer(line);
+if(marker1) map.removeLayer(marker1);
+if(marker2) map.removeLayer(marker2);
+
+marker1=L.marker([lat1,lon1]).addTo(map);
+marker2=L.marker([lat2,lon2]).addTo(map);
+line=L.polyline([[lat1,lon1],[lat2,lon2]]).addTo(map);
+
+map.fitBounds(line.getBounds(),{padding:[30,30]});
+}
+calc();
+</script>
+</body>
+</html>
